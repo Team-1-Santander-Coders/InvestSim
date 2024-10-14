@@ -1,40 +1,30 @@
-# Read Me First
-The following was discovered as part of building this project:
+## Para executar o banco de dados usando Docker (só para ficar mais simples)
 
-* No Docker Compose services found. As of now, the application won't start! Please add at least one service to the `compose.yaml` file.
+### Crie o arquivo `.env` baseado no `.env.example`
 
-# Getting Started
+**1.** Use o `.env.example` como molde e insira os dados necessários
 
-### Reference Documentation
-For further reference, please consider the following sections:
+**2.** Logo após execute o comando para rodar seu container Docker (Lembra de fechar ele depois)
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/3.3.4/maven-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/3.3.4/maven-plugin/build-image.html)
-* [Spring Web](https://docs.spring.io/spring-boot/docs/3.3.4/reference/htmlsingle/index.html#web)
-* [Spring Data JPA](https://docs.spring.io/spring-boot/docs/3.3.4/reference/htmlsingle/index.html#data.sql.jpa-and-spring-data)
-* [Spring Boot DevTools](https://docs.spring.io/spring-boot/docs/3.3.4/reference/htmlsingle/index.html#using.devtools)
-* [Docker Compose Support](https://docs.spring.io/spring-boot/docs/3.3.4/reference/htmlsingle/index.html#features.docker-compose)
+```bash
+docker run --name investsim --env-file .env -d -p 5432:5432 -v investsimdata:/var/lib/postgresql/data postgres:latest
+```
 
-### Guides
-The following guides illustrate how to use some features concretely:
+#### Se já tiver rodado alguma vez e o container tiver no seu PC, para iniciar bastar executar isso:
 
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
-* [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
+```bash
+docker start investsim
+```
 
-### Docker Compose support
-This project contains a Docker Compose file named `compose.yaml`.
+### Instale as dependências
 
-However, no services were found. As of now, the application won't start!
+**1. Se tiver no Mac/Linux:**
 
-Please make sure to add at least one service in the `compose.yaml` file.
+```bash
+./mvnw clean install
+```
 
-### Maven Parent overrides
-
-Due to Maven's design, elements are inherited from the parent POM to the project POM.
-While most of the inheritance is fine, it also inherits unwanted elements like `<license>` and `<developers>` from the parent.
-To prevent this, the project POM contains empty overrides for these elements.
-If you manually switch to a different parent and actually want the inheritance, you need to remove those overrides.
-
+**2. Se tiver no Ruindows:**
+```shell
+./mvnw.cmd clean install
+```
