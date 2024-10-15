@@ -1,7 +1,9 @@
 package com.team1.investsim.entities;
 
+import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,8 +29,8 @@ public class AssetHoldingEntity implements Identifiable {
     @JoinColumn(name = "portfolio_id", nullable = false)
     private PortfolioEntity portfolio;
 
-    public double getValue(LocalDateTime date) {
-        return 0.0;
+    public BigDecimal getValue(LocalDateTime date) throws HistoricalDataNotFoundException {
+        return asset.getValueByDate(date).multiply(BigDecimal.valueOf(quantity));
     }
 
     @Override

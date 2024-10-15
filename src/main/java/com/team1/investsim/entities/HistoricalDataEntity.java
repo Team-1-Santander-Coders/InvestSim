@@ -1,6 +1,8 @@
 package com.team1.investsim.entities;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,16 +16,16 @@ public class HistoricalDataEntity implements Identifiable {
     private LocalDateTime date;
 
     @Column(nullable = false)
-    private double openPrice;
+    private BigDecimal openPrice;
 
     @Column(nullable = false)
-    private double closePrice;
+    private BigDecimal closePrice;
 
     @Column(nullable = false)
-    private double highPrice;
+    private BigDecimal highPrice;
 
     @Column(nullable = false)
-    private double lowPrice;
+    private BigDecimal lowPrice;
 
     @Column(nullable = false)
     private long volume;
@@ -50,35 +52,35 @@ public class HistoricalDataEntity implements Identifiable {
         this.date = date;
     }
 
-    public double getOpenPrice() {
+    public BigDecimal getOpenPrice() {
         return openPrice;
     }
 
-    public void setOpenPrice(double openPrice) {
+    public void setOpenPrice(BigDecimal openPrice) {
         this.openPrice = openPrice;
     }
 
-    public double getClosePrice() {
+    public BigDecimal getClosePrice() {
         return closePrice;
     }
 
-    public void setClosePrice(double closePrice) {
+    public void setClosePrice(BigDecimal closePrice) {
         this.closePrice = closePrice;
     }
 
-    public double getHighPrice() {
+    public BigDecimal getHighPrice() {
         return highPrice;
     }
 
-    public void setHighPrice(double highPrice) {
+    public void setHighPrice(BigDecimal highPrice) {
         this.highPrice = highPrice;
     }
 
-    public double getLowPrice() {
+    public BigDecimal getLowPrice() {
         return lowPrice;
     }
 
-    public void setLowPrice(double lowPrice) {
+    public void setLowPrice(BigDecimal lowPrice) {
         this.lowPrice = lowPrice;
     }
 
