@@ -6,16 +6,5 @@ import com.team1.investsim.repositories.Repository;
 import java.util.List;
 
 public interface AssetRepository extends Repository<AssetEntity> {
-    @Override
-    AssetEntity findByID(long id);
-
-    AssetEntity findByTicker(String assetTicker);
-
-    @Override
-    void save(AssetEntity assetEntity);
-
-    @Override
-    List<AssetEntity> findAll();
-
     void saveAll(List<AssetEntity> assetEntities);
 }
