@@ -1,4 +1,4 @@
-package com.team1.investsim.repositories.assetholdings;
+package com.team1.investsim.repositories.assetholding;
 
 import com.team1.investsim.entities.AssetHoldingEntity;
 import com.team1.investsim.repositories.Repository;
