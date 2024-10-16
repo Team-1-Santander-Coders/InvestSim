@@ -73,7 +73,7 @@ public class AssetEntity implements Identifiable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof AssetEntity that)) return false;
-        return id == that.id && Objects.equals(ticker, that.ticker);
+        return id == that.id || Objects.equals(ticker, that.ticker);
     }
 
     @Override

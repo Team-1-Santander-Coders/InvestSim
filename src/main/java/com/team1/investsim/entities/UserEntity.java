@@ -3,6 +3,8 @@ package com.team1.investsim.entities;
 import com.team1.investsim.entities.types.UserType;
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "users")
 public class UserEntity implements Identifiable {
@@ -75,5 +77,17 @@ public class UserEntity implements Identifiable {
 
     public void setPortfolio(PortfolioEntity portfolio) {
         this.portfolio = portfolio;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserEntity that)) return false;
+        return id == that.id || Objects.equals(document, that.document);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, document);
     }
 }

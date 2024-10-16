@@ -3,6 +3,7 @@ package com.team1.investsim.entities;
 import com.team1.investsim.entities.types.TransactionType;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "transactions")
@@ -77,5 +78,17 @@ public class TransactionEntity implements Identifiable {
 
     public void setType(TransactionType type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TransactionEntity that)) return false;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

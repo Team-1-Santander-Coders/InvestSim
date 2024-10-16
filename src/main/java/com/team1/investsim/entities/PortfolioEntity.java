@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "portfolios")
@@ -74,5 +75,17 @@ public class PortfolioEntity implements Identifiable {
     public void addAssetHolding(AssetHoldingEntity assetHoldingEntity) {
         if (assetHoldings.isEmpty()) setAssetHoldings(new ArrayList<>());
         this.assetHoldings.add(assetHoldingEntity);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PortfolioEntity that)) return false;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

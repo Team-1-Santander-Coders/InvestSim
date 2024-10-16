@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "asset_holdings")
@@ -65,5 +66,17 @@ public class AssetHoldingEntity implements Identifiable {
 
     public void setBuyTransaction(TransactionEntity buyTransaction) {
         this.buyTransaction = buyTransaction;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AssetHoldingEntity that)) return false;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

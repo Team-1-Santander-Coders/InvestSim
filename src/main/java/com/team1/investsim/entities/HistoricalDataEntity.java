@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "historical_data")
@@ -98,5 +99,17 @@ public class HistoricalDataEntity implements Identifiable {
 
     public void setAsset(AssetEntity asset) {
         this.asset = asset;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof HistoricalDataEntity that)) return false;
+        return Objects.equals(date, that.date) && Objects.equals(asset, that.asset);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(date, asset);
     }
 }
