@@ -45,6 +45,18 @@ public class HistoricalDataEntity implements Identifiable {
         this.id = id;
     }
 
+    public HistoricalDataEntity() {}
+
+    public HistoricalDataEntity(LocalDateTime date, BigDecimal openPrice, BigDecimal closePrice, BigDecimal highPrice, BigDecimal lowPrice, long volume, AssetEntity asset) {
+        this.date = date;
+        this.openPrice = openPrice;
+        this.closePrice = closePrice;
+        this.highPrice = highPrice;
+        this.lowPrice = lowPrice;
+        this.volume = volume;
+        this.asset = asset;
+    }
+
     public LocalDateTime getDate() {
         return date;
     }
