@@ -1,6 +1,6 @@
 package com.team1.investsim.entities;
 
-import com.team1.investsim.Utils.DateUtil;
+import com.team1.investsim.utils.DateUtil;
 import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import jakarta.persistence.*;
 

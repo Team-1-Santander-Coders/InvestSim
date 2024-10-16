@@ -1,4 +1,4 @@
-package com.team1.investsim.Utils;
+package com.team1.investsim.utils;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
