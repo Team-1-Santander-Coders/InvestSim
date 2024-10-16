@@ -4,12 +4,11 @@ import com.team1.investsim.entities.AssetEntity;
 import com.team1.investsim.entities.HistoricalDataEntity;
 import com.team1.investsim.exceptions.IllegalDateException;
 import com.team1.investsim.utils.CSVProcessor;
-import com.team1.investsim.utils.DateUtil;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class DataLoader {
 
@@ -19,31 +18,22 @@ public class DataLoader {
         if (assetsDataOptional.isPresent()) {
             List<String[]> assetsData = assetsDataOptional.get();
             List<HistoricalDataEntity> historicalDataEntityList = new ArrayList<>();
-            try {
 
-                for (String[] assetData : assetsData) {
-                    if(assetEntity.getTicker().equals(assetData[7])) {
-                        HistoricalDataEntity historicalDataEntity = new HistoricalDataEntity();
-                        historicalDataEntity.setAll(assetEntity, assetData[0], assetData[1], assetData[2], assetData[3], assetData[4], assetData[5]);
-                        historicalDataEntityList.add(historicalDataEntity);
-                        
-                        assetEntity.setHistoricalData(historicalDataEntityList);
-                    }
-                }
+            assetsData.stream()
+                    .filter(assetData -> assetEntity.getTicker().equals(assetData[7]))
+                    .map(assetData -> {
+                        try {
+                            HistoricalDataEntity historicalDataEntity = new HistoricalDataEntity();
+                            historicalDataEntity.setAll(assetEntity, assetData[0], assetData[1], assetData[2], assetData[3], assetData[4], assetData[5]);
+                            historicalDataEntityList.add(historicalDataEntity);
 
-            } catch (IllegalDateException e) {
-                e.printStackTrace();
-            }
+                        } catch (Exception e) { e.printStackTrace(); }
+
+                        return historicalDataEntityList;})
+                    .collect(Collectors.toList());
+
+            if(!historicalDataEntityList.isEmpty()) assetEntity.setHistoricalData(historicalDataEntityList);
 
         }
-    }
-
-    public static void main(String[] args) {
-        AssetEntity assetEntity = new AssetEntity();
-        assetEntity.setTicker("MMM");
-
-        loadData(assetEntity, "sp500_data.csv");
-
-        System.out.println("ticker: " + assetEntity.getTicker() + " - historicalDataLength: "+assetEntity.getHistoricalData().size());
     }
 }
