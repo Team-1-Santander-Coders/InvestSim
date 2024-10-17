@@ -10,7 +10,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "asset_holdings")
 public class AssetHoldingEntity implements Identifiable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

@@ -1,6 +1,7 @@
 package com.team1.investsim.services;
 
 import com.team1.investsim.entities.AssetEntity;
+import com.team1.investsim.exceptions.TickerNotFoundException;
 import com.team1.investsim.repositories.AssetRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,16 @@ public class AssetService {
 
     public Optional<AssetEntity> getAssetById(Long id) {
         return assetRepository.findById(id);
+    }
+
+    public AssetEntity getAssetByTicker(String ticker) throws TickerNotFoundException {
+        return assetRepository.findAll().stream()
+                .filter(assetEntity -> assetEntity.getTicker().equals(ticker))
+                .findFirst().orElseThrow(() -> new TickerNotFoundException("Ticker não encontrado no sistema."));
+    }
+
+    public long getAssetIdByTicker(String ticker) throws TickerNotFoundException {
+        return getAssetByTicker(ticker).getId();
     }
 
     public long countAssets() {

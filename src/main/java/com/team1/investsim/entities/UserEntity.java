@@ -30,7 +30,7 @@ public class UserEntity implements Identifiable {
     @Column(nullable = false)
     private String password;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "portofolios", referencedColumnName = "id")
     private PortfolioEntity portfolio;
 
