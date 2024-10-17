@@ -1,9 +1,14 @@
 package com.team1.investsim.entities;
 
+import com.team1.investsim.exceptions.AssetHoldingNotFoundException;
+import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "portfolios")
@@ -13,18 +18,28 @@ public class PortfolioEntity implements Identifiable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<AssetHoldingEntity> assetHoldings;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TransactionEntity> transactions;
 
-    public double getReturn(LocalDateTime start, LocalDateTime end) {
-        return 0.0;
+    public BigDecimal getReturn(LocalDateTime start, LocalDateTime end) {
+        BigDecimal startValue = getTotalValue(start);
+        BigDecimal endValue = getTotalValue(end);
+        return startValue.subtract(endValue);
     }
 
-    public double getTotalValue(LocalDateTime date) {
-        return 0.0;
+    public BigDecimal getTotalValue(LocalDateTime date) throws RuntimeException {
+        return assetHoldings.stream()
+                .map(assetHolding -> {
+                    try {
+                        return assetHolding.getValue(date);
+                    } catch (HistoricalDataNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
@@ -51,5 +66,30 @@ public class PortfolioEntity implements Identifiable {
 
     public void setTransactions(List<TransactionEntity> transactions) {
         this.transactions = transactions;
+    }
+
+    public void addTransaction(TransactionEntity transactionEntity) {
+        this.transactions.add(transactionEntity);
+    }
+
+    public void addAssetHolding(AssetHoldingEntity assetHoldingEntity) {
+        this.assetHoldings.add(assetHoldingEntity);
+    }
+
+    public void removeAssetHolding(AssetHoldingEntity assetHoldingEntity) throws AssetHoldingNotFoundException {
+        if (!assetHoldings.contains(assetHoldingEntity)) throw new AssetHoldingNotFoundException("Aporte de ações não encontrado neste portfólio");
+        else assetHoldings.remove(assetHoldingEntity);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PortfolioEntity that)) return false;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

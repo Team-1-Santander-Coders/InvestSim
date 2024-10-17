@@ -1,4 +1,4 @@
-package com.team1.investsim.Utils;
+package com.team1.investsim.utils;
 
 import com.team1.investsim.exceptions.IllegalDateException;
 

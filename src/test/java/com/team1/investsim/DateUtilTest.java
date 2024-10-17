@@ -1,6 +1,6 @@
 package com.team1.investsim;
 
-import com.team1.investsim.Utils.DateUtil;
+import com.team1.investsim.utils.DateUtil;
 import com.team1.investsim.exceptions.IllegalDateException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
