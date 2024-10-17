@@ -17,10 +17,10 @@ public class PortfolioEntity implements Identifiable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<AssetHoldingEntity> assetHoldings;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TransactionEntity> transactions;
 
     public BigDecimal getReturn(LocalDateTime start, LocalDateTime end) {

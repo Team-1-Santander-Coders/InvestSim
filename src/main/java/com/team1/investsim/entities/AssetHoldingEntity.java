@@ -52,6 +52,8 @@ public class AssetHoldingEntity implements Identifiable {
         this.asset = asset;
     }
 
+    public void setPortfolio(PortfolioEntity portfolio) { this.portfolio = portfolio;  }
+
     public double getQuantity() {
         return quantity;
     }

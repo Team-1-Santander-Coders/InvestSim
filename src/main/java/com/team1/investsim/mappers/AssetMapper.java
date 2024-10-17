@@ -19,13 +19,14 @@ public class AssetMapper {
 
     public AssetDTO toDto(AssetEntity assetEntity) throws HistoricalDataNotFoundException {
         return new AssetDTO(assetEntity.getId(),
-                            assetEntity.getTicker(),
-                            assetEntity.getValueByDate(LocalDate.now().atStartOfDay()),
-                            assetEntity.getDailyChange(LocalDate.now().atStartOfDay()));
-}
+                assetEntity.getTicker(),
+                assetEntity.getValueByDate(LocalDate.now().atStartOfDay()),
+                assetEntity.getDailyChange(LocalDate.now().atStartOfDay()));
+    }
 
     public Optional<AssetEntity> toEntity(AssetDTO dto) {
         Optional<AssetEntity> assetEntity = assetService.getAssetById(dto.id());
-        return Optional.ofNullable(assetEntity.orElse(null));
+        return Optional.ofNullable(assetEntity.orElseThrow(null));
     }
+
 }

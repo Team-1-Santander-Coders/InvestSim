@@ -13,9 +13,7 @@ public class AssetHoldingService {
     @Autowired
     private AssetHoldingRepository assetHoldingRepository;
 
-    public void saveAssetHolding(AssetHoldingEntity assetHoldingEntity) {
-        assetHoldingRepository.saveAndFlush(assetHoldingEntity);
-    }
+    public void saveAssetHolding(AssetHoldingEntity assetHoldingEntity) { assetHoldingRepository.saveAndFlush(assetHoldingEntity); }
 
     public List<AssetHoldingEntity> getAllAssetHoldings() {
         return assetHoldingRepository.findAll();

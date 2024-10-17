@@ -14,17 +14,11 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    public TransactionService(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
-    }
+    public TransactionService(TransactionRepository transactionRepository) { this.transactionRepository = transactionRepository; }
 
-    public void saveTransaction(TransactionEntity transactionEntity) {
-        transactionRepository.saveAndFlush(transactionEntity);
-    }
+    public void saveTransaction(TransactionEntity transactionEntity) { transactionRepository.saveAndFlush(transactionEntity); }
 
-    public List<TransactionEntity> getAllTransactions() {
-        return transactionRepository.findAll();
-    }
+    public List<TransactionEntity> getAllTransactions() { return transactionRepository.findAll(); }
 
     public Optional<TransactionEntity> getTransactionById(Long id) {
         return transactionRepository.findById(id);
