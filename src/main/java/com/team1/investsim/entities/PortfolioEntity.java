@@ -1,5 +1,6 @@
 package com.team1.investsim.entities;
 
+import com.team1.investsim.exceptions.AssetHoldingNotFoundException;
 import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import jakarta.persistence.*;
 
@@ -17,10 +18,10 @@ public class PortfolioEntity implements Identifiable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<AssetHoldingEntity> assetHoldings;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TransactionEntity> transactions;
 
     public BigDecimal getReturn(LocalDateTime start, LocalDateTime end) {
@@ -68,13 +69,16 @@ public class PortfolioEntity implements Identifiable {
     }
 
     public void addTransaction(TransactionEntity transactionEntity) {
-        if (transactions.isEmpty()) setTransactions(new ArrayList<>());
         this.transactions.add(transactionEntity);
     }
 
     public void addAssetHolding(AssetHoldingEntity assetHoldingEntity) {
-        if (assetHoldings.isEmpty()) setAssetHoldings(new ArrayList<>());
         this.assetHoldings.add(assetHoldingEntity);
+    }
+
+    public void removeAssetHolding(AssetHoldingEntity assetHoldingEntity) throws AssetHoldingNotFoundException {
+        if (!assetHoldings.contains(assetHoldingEntity)) throw new AssetHoldingNotFoundException("Aporte de ações não encontrado neste portfólio");
+        else assetHoldings.remove(assetHoldingEntity);
     }
 
     @Override

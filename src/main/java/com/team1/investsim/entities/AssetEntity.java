@@ -19,7 +19,7 @@ public class AssetEntity implements Identifiable {
     @Column(nullable = false, unique = true)
     private String ticker;
 
-    @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<HistoricalDataEntity> historicalData;
 
     @Override

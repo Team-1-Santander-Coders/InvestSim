@@ -1,6 +1,5 @@
 package com.team1.investsim.services;
 
-import com.team1.investsim.entities.PortfolioEntity;
 import com.team1.investsim.entities.TransactionEntity;
 import com.team1.investsim.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,8 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public void saveTransaction(TransactionEntity transactionEntity) {
-        transactionRepository.saveAndFlush(transactionEntity);
+    public TransactionEntity saveTransaction(TransactionEntity transactionEntity) {
+        return transactionRepository.saveAndFlush(transactionEntity);
     }
 
     public List<TransactionEntity> getAllTransactions() {

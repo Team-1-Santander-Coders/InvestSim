@@ -1,7 +1,9 @@
 package com.team1.investsim.services;
 
+import com.team1.investsim.entities.AssetHoldingEntity;
 import com.team1.investsim.entities.TransactionEntity;
 import com.team1.investsim.entities.UserEntity;
+import com.team1.investsim.exceptions.AssetHoldingNotFoundException;
 import com.team1.investsim.exceptions.DocumentNotFoundException;
 import com.team1.investsim.exceptions.EmailNotFoundException;
 import com.team1.investsim.repositories.UserRepository;
@@ -20,7 +22,14 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void saveTransaction(UserEntity userEntity) {
+    public void saveUser(UserEntity userEntity) {
+        if (isRegistered(userEntity)) {
+            try {
+                userEntity.setId(getUserByDocument(userEntity.getDocument()).getId());
+            } catch (DocumentNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         userRepository.saveAndFlush(userEntity);
     }
 
@@ -48,5 +57,24 @@ public class UserService {
 
     public long countUsers() {
         return userRepository.count();
+    }
+
+    public void removeAssetHolding(UserEntity userEntity, AssetHoldingEntity assetHoldingEntity) throws AssetHoldingNotFoundException {
+        userEntity.getPortfolio().removeAssetHolding(assetHoldingEntity);
+        userRepository.saveAndFlush(userEntity);
+    }
+
+    public void addAssetHolding(UserEntity userEntity, AssetHoldingEntity assetHoldingEntity) {
+        userEntity.getPortfolio().addAssetHolding(assetHoldingEntity);
+        userRepository.saveAndFlush(userEntity);
+    }
+
+    public void addTransaction(UserEntity userEntity, TransactionEntity transactionEntity) {
+        userEntity.getPortfolio().addTransaction(transactionEntity);
+        userRepository.saveAndFlush(userEntity);
+    }
+
+    public boolean isRegistered(UserEntity userEntity) {
+        return userRepository.findAll().stream().anyMatch(registeredUser -> registeredUser.equals(userEntity));
     }
 }
