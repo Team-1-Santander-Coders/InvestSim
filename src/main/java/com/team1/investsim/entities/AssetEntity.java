@@ -4,6 +4,8 @@ import com.team1.investsim.utils.DateUtil;
 import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import jakarta.persistence.*;
 
+
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +34,9 @@ public class AssetEntity implements Identifiable {
         this.id = id;
     }
 
+    public AssetEntity(){}
+
+
     public BigDecimal getReturn(LocalDateTime start, LocalDateTime end) throws HistoricalDataNotFoundException {
         BigDecimal startValue = this.getHistoricalDataByDate(start).getClosePrice();
         BigDecimal endValue = this.getHistoricalDataByDate(end).getClosePrice();
@@ -48,6 +53,10 @@ public class AssetEntity implements Identifiable {
 
     public void setTicker(String ticker) {
         this.ticker = ticker;
+    }
+
+    public BigDecimal getDailyChange(LocalDateTime today) throws HistoricalDataNotFoundException {
+        return getValueByDate(today).subtract(getValueByDate(today.minusDays(1)));
     }
 
     public List<HistoricalDataEntity> getHistoricalData() {
