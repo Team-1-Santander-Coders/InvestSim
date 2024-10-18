@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class AssetMapper {
@@ -21,14 +23,36 @@ public class AssetMapper {
         HistoricalDataEntity historicalDataEntity = assetEntity.getHistoricalDataByDate(LocalDate.now().atStartOfDay());
 
         return new AssetDTO(assetEntity.getId(),
-                assetEntity.getTicker(),
-                assetEntity.getValueByDate(LocalDate.now().atStartOfDay()),
-                assetEntity.getDailyChange(LocalDate.now().atStartOfDay()),
-                historicalDataEntity.getOpenPrice(),
-                historicalDataEntity.getClosePrice(),
-                historicalDataEntity.getHighPrice(),
-                historicalDataEntity.getLowPrice(),
-                historicalDataEntity.getVolume());
+                            assetEntity.getTicker(),
+                            assetEntity.getValueByDate(LocalDate.now().atStartOfDay()),
+                            assetEntity.getDailyChange(LocalDate.now().atStartOfDay()),
+                            historicalDataEntity.getOpenPrice(),
+                            historicalDataEntity.getClosePrice(),
+                            historicalDataEntity.getHighPrice(),
+                            historicalDataEntity.getLowPrice(),
+                            historicalDataEntity.getVolume());
+    }
+
+    public List<AssetDTO> toDto(List<AssetEntity> assetEntityList) throws HistoricalDataNotFoundException {
+
+
+        return assetEntityList.stream().map(assetEntity -> {
+            HistoricalDataEntity historicalDataEntity = null;
+            try { historicalDataEntity = assetEntity.getHistoricalDataByDate(LocalDate.now().atStartOfDay());}
+            catch (HistoricalDataNotFoundException e) { throw new RuntimeException(e); }
+
+            try {
+                return new AssetDTO(assetEntity.getId(),
+                            assetEntity.getTicker(),
+                            assetEntity.getValueByDate(LocalDate.now().atStartOfDay()),
+                            assetEntity.getDailyChange(LocalDate.now().atStartOfDay()),
+                            historicalDataEntity.getOpenPrice(),
+                            historicalDataEntity.getClosePrice(),
+                            historicalDataEntity.getHighPrice(),
+                            historicalDataEntity.getLowPrice(),
+                            historicalDataEntity.getVolume());
+            } catch (HistoricalDataNotFoundException e) { throw new RuntimeException(e); }
+        }).collect(Collectors.toList());
     }
 
     public Optional<AssetEntity> toEntity(AssetDTO dto) {
