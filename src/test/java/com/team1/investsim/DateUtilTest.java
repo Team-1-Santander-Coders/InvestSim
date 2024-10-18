@@ -25,7 +25,7 @@ public class DateUtilTest {
     @Test
     public void testValidDateWithoutTime() throws IllegalDateException {
         String validDateStr = "2024-10-15";
-        String pattern = DateUtil.CSV_DATE_PATTERN;
+        String pattern = DateUtil.ISO8601_DATE_PATTERN;
 
         assertTrue(DateUtil.isValidDate(validDateStr, pattern), "A data deveria ser válida");
 
@@ -75,7 +75,7 @@ public class DateUtilTest {
     @Test
     public void testDateWithoutTimeCompletesZeros() throws IllegalDateException {
         String validDateStr = "2024-10-15";
-        String pattern = DateUtil.CSV_DATE_PATTERN;
+        String pattern = DateUtil.ISO8601_DATE_PATTERN;
 
         LocalDateTime result = DateUtil.stringToDate(validDateStr, pattern);
 

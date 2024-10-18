@@ -2,7 +2,9 @@ package com.team1.investsim.services;
 
 import com.team1.investsim.dtos.AssetDTO;
 import com.team1.investsim.entities.AssetEntity;
+import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import com.team1.investsim.exceptions.TickerNotFoundException;
+import com.team1.investsim.mappers.AssetMapper;
 import com.team1.investsim.repositories.AssetRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +43,6 @@ public class AssetService {
 
     public long getAssetIdByTicker(String ticker) throws TickerNotFoundException {
         return getAssetByTicker(ticker).getId();
-    }
-
-    public List<AssetDTO> getAssetsList() {
-        return null;
     }
 
     public long countAssets() {

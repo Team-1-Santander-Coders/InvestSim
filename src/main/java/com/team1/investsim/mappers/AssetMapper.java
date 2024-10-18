@@ -6,10 +6,13 @@ import com.team1.investsim.entities.HistoricalDataEntity;
 import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import com.team1.investsim.services.AssetService;
 
+import com.team1.investsim.services.HistoricalDataService;
+import com.team1.investsim.utils.ThrowingFunctionWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,40 +22,33 @@ public class AssetMapper {
     @Autowired
     private AssetService assetService;
 
-    public AssetDTO toDto(AssetEntity assetEntity) throws HistoricalDataNotFoundException {
-        HistoricalDataEntity historicalDataEntity = assetEntity.getHistoricalDataByDate(LocalDate.now().atStartOfDay());
+    @Autowired
+    private HistoricalDataService historicalDataService;
 
-        return new AssetDTO(assetEntity.getId(),
-                            assetEntity.getTicker(),
-                            assetEntity.getValueByDate(LocalDate.now().atStartOfDay()),
-                            assetEntity.getDailyChange(LocalDate.now().atStartOfDay()),
-                            historicalDataEntity.getOpenPrice(),
-                            historicalDataEntity.getClosePrice(),
-                            historicalDataEntity.getHighPrice(),
-                            historicalDataEntity.getLowPrice(),
-                            historicalDataEntity.getVolume());
+    public AssetDTO toDto(AssetEntity assetEntity) throws HistoricalDataNotFoundException {
+        return createAssetDTO(assetEntity);
     }
 
-    public List<AssetDTO> toDto(List<AssetEntity> assetEntityList) throws HistoricalDataNotFoundException {
+    public List<AssetDTO> toDto(List<AssetEntity> assetEntityList) throws Exception {
+        return assetEntityList.stream()
+                .map(ThrowingFunctionWrapper.wrap(this::createAssetDTO))
+                .collect(Collectors.toList());
+    }
 
+    private AssetDTO createAssetDTO(AssetEntity assetEntity) throws HistoricalDataNotFoundException {
+        HistoricalDataEntity historicalDataEntity = assetEntity.getHistoricalDataByDate(LocalDate.now().atStartOfDay());
 
-        return assetEntityList.stream().map(assetEntity -> {
-            HistoricalDataEntity historicalDataEntity = null;
-            try { historicalDataEntity = assetEntity.getHistoricalDataByDate(LocalDate.now().atStartOfDay());}
-            catch (HistoricalDataNotFoundException e) { throw new RuntimeException(e); }
-
-            try {
-                return new AssetDTO(assetEntity.getId(),
-                            assetEntity.getTicker(),
-                            assetEntity.getValueByDate(LocalDate.now().atStartOfDay()),
-                            assetEntity.getDailyChange(LocalDate.now().atStartOfDay()),
-                            historicalDataEntity.getOpenPrice(),
-                            historicalDataEntity.getClosePrice(),
-                            historicalDataEntity.getHighPrice(),
-                            historicalDataEntity.getLowPrice(),
-                            historicalDataEntity.getVolume());
-            } catch (HistoricalDataNotFoundException e) { throw new RuntimeException(e); }
-        }).collect(Collectors.toList());
+        return new AssetDTO(
+                assetEntity.getId(),
+                assetEntity.getTicker(),
+                assetEntity.getValueByDate(LocalDateTime.now()),
+                assetEntity.getDailyChange(LocalDateTime.now()),
+                historicalDataEntity.getOpenPrice(),
+                historicalDataEntity.getClosePrice(),
+                historicalDataEntity.getHighPrice(),
+                historicalDataEntity.getLowPrice(),
+                historicalDataEntity.getVolume()
+        );
     }
 
     public Optional<AssetEntity> toEntity(AssetDTO dto) {

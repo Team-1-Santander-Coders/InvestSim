@@ -5,14 +5,11 @@ import com.team1.investsim.entities.HistoricalDataEntity;
 import com.team1.investsim.utils.CSVProcessor;
 import com.team1.investsim.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class DataLoaderService {
@@ -30,7 +27,7 @@ public class DataLoaderService {
                     .forEach(assetData -> {
                         try {
                             HistoricalDataEntity historicalDataEntity = new HistoricalDataEntity(
-                                    DateUtil.stringToDate(assetData[0], DateUtil.CSV_DATE_PATTERN),
+                                    DateUtil.stringToDate(assetData[0], DateUtil.ISO8601_DATE_PATTERN),
                                     BigDecimal.valueOf(Double.parseDouble(assetData[1])),
                                     BigDecimal.valueOf(Double.parseDouble(assetData[2])),
                                     BigDecimal.valueOf(Double.parseDouble(assetData[3])),
