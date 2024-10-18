@@ -115,15 +115,6 @@ public class HistoricalDataEntity implements Identifiable {
         this.asset = asset;
     }
 
-    public void setAll(AssetEntity asset, String date, String openPrice, String closePrice, String highPrice, String lowPrice, String volume) throws IllegalDateException {
-        this.date = DateUtil.stringToDate(date, "yyyy-MM-dd");
-        this.openPrice = BigDecimal.valueOf(Double.valueOf(openPrice));
-        this.closePrice = BigDecimal.valueOf(Double.valueOf(closePrice));
-        this.highPrice = BigDecimal.valueOf(Double.valueOf(highPrice));
-        this.lowPrice = BigDecimal.valueOf(Double.valueOf(lowPrice));
-        this.volume = Double.valueOf(volume).longValue();
-        this.asset = asset;
-    }
 
     public String toString(){
         return "id: "+ this.id + " - date: "+this.getDate() +" - ticker: " + this.getAsset().getTicker() + " - open: " + this.getOpenPrice() + " - close: " + this.getClosePrice();
