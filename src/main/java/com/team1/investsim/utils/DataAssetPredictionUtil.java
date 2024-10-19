@@ -46,7 +46,7 @@ public class DataAssetPredictionUtil {
         predictedData.setOpenPrice(BigDecimal.ZERO);
         predictedData.setHighPrice(BigDecimal.ZERO);
         predictedData.setLowPrice(BigDecimal.ZERO);
-        predictedData.setClosePrice(new BigDecimal(String.valueOf(results.get("Adj_Close"))));
+        predictedData.setClosePrice(new BigDecimal(String.valueOf(results.get("Close"))));
         predictedData.setVolume(lastData.getVolume());
 
         return predictedData;
