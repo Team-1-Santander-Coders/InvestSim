@@ -2,7 +2,6 @@ package com.team1.investsim.controllers;
 
 import com.team1.investsim.dtos.AssetDTO;
 import com.team1.investsim.entities.AssetEntity;
-import com.team1.investsim.entities.HistoricalDataEntity;
 import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import com.team1.investsim.exceptions.IllegalDateException;
 import com.team1.investsim.mappers.AssetMapper;

@@ -6,8 +6,6 @@ import com.team1.investsim.utils.DateUtil;
 import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import jakarta.persistence.*;
 
-
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
