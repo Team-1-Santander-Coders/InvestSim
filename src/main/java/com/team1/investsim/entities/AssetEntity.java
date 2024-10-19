@@ -37,7 +37,6 @@ public class AssetEntity implements Identifiable {
 
     public AssetEntity(){}
 
-
     public BigDecimal getReturn(LocalDateTime start, LocalDateTime end) throws HistoricalDataNotFoundException {
         BigDecimal startValue = this.getHistoricalDataByDate(start).getClosePrice();
         BigDecimal endValue = this.getHistoricalDataByDate(end).getClosePrice();

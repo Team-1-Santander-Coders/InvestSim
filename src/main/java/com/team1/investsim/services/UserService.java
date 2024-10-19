@@ -3,10 +3,9 @@ package com.team1.investsim.services;
 import com.team1.investsim.entities.AssetHoldingEntity;
 import com.team1.investsim.entities.TransactionEntity;
 import com.team1.investsim.entities.UserEntity;
-import com.team1.investsim.exceptions.AssetHoldingNotFoundException;
-import com.team1.investsim.exceptions.DocumentNotFoundException;
-import com.team1.investsim.exceptions.EmailNotFoundException;
+import com.team1.investsim.exceptions.*;
 import com.team1.investsim.repositories.UserRepository;
+import static com.team1.investsim.entities.UserEntity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void saveUser(UserEntity userEntity) {
+    private UserEntity saveUser(UserEntity userEntity) {
         if (isRegistered(userEntity)) {
             try {
                 userEntity.setId(getUserByDocument(userEntity.getDocument()).getId());
@@ -30,7 +29,7 @@ public class UserService {
                 e.printStackTrace();
             }
         }
-        userRepository.saveAndFlush(userEntity);
+        return userRepository.saveAndFlush(userEntity);
     }
 
     public List<UserEntity> getAllUsers() {
@@ -72,6 +71,12 @@ public class UserService {
     public void addTransaction(UserEntity userEntity, TransactionEntity transactionEntity) {
         userEntity.getPortfolio().addTransaction(transactionEntity);
         userRepository.saveAndFlush(userEntity);
+    }
+
+    public UserEntity registerUser(String document, String email, String password) throws InvalidPasswordException, InvalidEmailException, InvalidDocumentException, DuplicatedUserException {
+        UserEntity user = createUser(document, email, password);
+        if (isRegistered(user)) throw new DuplicatedUserException("Já existe um usuário com este email ou documento.");
+        return saveUser(user);
     }
 
     public boolean isRegistered(UserEntity userEntity) {

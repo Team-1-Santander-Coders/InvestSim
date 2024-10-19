@@ -39,14 +39,15 @@ public class DataAssetPredictionUtil {
 
         Map<String, ?> results = modelEvaluator.evaluate(arguments);
 
-        System.out.println("Resultados do modelo: " + results);
+        Map<String, Object> closeMap = (Map<String, Object>) results.get("Close");
+        BigDecimal closePrice = new BigDecimal(String.valueOf(closeMap.get("result")));
 
         HistoricalDataEntity predictedData = new HistoricalDataEntity();
         predictedData.setDate(futureDate);
         predictedData.setOpenPrice(BigDecimal.ZERO);
         predictedData.setHighPrice(BigDecimal.ZERO);
         predictedData.setLowPrice(BigDecimal.ZERO);
-        predictedData.setClosePrice(new BigDecimal(String.valueOf(results.get("Close"))));
+        predictedData.setClosePrice(closePrice);
         predictedData.setVolume(lastData.getVolume());
 
         return predictedData;
