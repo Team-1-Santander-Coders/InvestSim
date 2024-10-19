@@ -1,7 +1,6 @@
 package com.team1.investsim.entities;
 
-import com.team1.investsim.exceptions.IllegalDateException;
-import com.team1.investsim.utils.DateUtil;
+
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;

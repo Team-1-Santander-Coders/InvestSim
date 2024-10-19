@@ -37,17 +37,16 @@ public class DataAssetPredictionUtil {
         arguments.put("Close", lastData.getClosePrice().doubleValue());
         arguments.put("Volume", (double) lastData.getVolume());
 
-        Map<String, ?> results = modelEvaluator.evaluate(arguments);
-
-        Map<String, Object> closeMap = (Map<String, Object>) results.get("Close");
-        BigDecimal closePrice = new BigDecimal(String.valueOf(closeMap.get("result")));
+        String results = modelEvaluator.evaluate(arguments).get("Close")
+                .toString()
+                .replaceAll("\\{result=|\\}", "");
 
         HistoricalDataEntity predictedData = new HistoricalDataEntity();
         predictedData.setDate(futureDate);
         predictedData.setOpenPrice(BigDecimal.ZERO);
         predictedData.setHighPrice(BigDecimal.ZERO);
         predictedData.setLowPrice(BigDecimal.ZERO);
-        predictedData.setClosePrice(closePrice);
+        predictedData.setClosePrice(new BigDecimal(Double.parseDouble(results)));
         predictedData.setVolume(lastData.getVolume());
 
         return predictedData;
