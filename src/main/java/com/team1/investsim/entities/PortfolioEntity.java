@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "portfolios")
@@ -53,6 +55,10 @@ public class PortfolioEntity implements Identifiable {
 
     public List<AssetHoldingEntity> getAssetHoldings() {
         return assetHoldings;
+    }
+
+    public Optional<List<AssetHoldingEntity>> getAssetHoldingByAssetId(long assetHoldingidAssetId) {
+        return Optional.of(getAssetHoldings().stream().filter(assetHoldingEntity -> assetHoldingidAssetId == assetHoldingEntity.getAsset().getId()).collect(Collectors.toList()));
     }
 
     public void setAssetHoldings(List<AssetHoldingEntity> assetHoldings) {
