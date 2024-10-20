@@ -13,12 +13,12 @@ public class HistoricalDataService {
     @Autowired
     private HistoricalDataRepository historicalDataRepository;
 
-    public void saveHistoricalData(HistoricalDataEntity historicalData) {
-        historicalDataRepository.saveAndFlush(historicalData);
+    public HistoricalDataEntity saveHistoricalData(HistoricalDataEntity historicalData) {
+        return historicalDataRepository.saveAndFlush(historicalData);
     }
 
-    public void saveAllHistoricalData(List<HistoricalDataEntity> historicalData) {
-        historicalDataRepository.saveAllAndFlush(historicalData);
+    public List<HistoricalDataEntity> saveAllHistoricalData(List<HistoricalDataEntity> historicalData) {
+        return historicalDataRepository.saveAllAndFlush(historicalData);
     }
 
     public List<HistoricalDataEntity> getAllHistoricalData() {

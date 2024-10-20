@@ -58,7 +58,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         return path.startsWith("/assets") ||
-                path.startsWith("/asset") ||
+                path.startsWith("/asset/") ||
                 path.equals("/login") ||
                 path.equals("/register");
     }

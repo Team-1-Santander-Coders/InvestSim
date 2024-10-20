@@ -2,10 +2,13 @@ package com.team1.investsim.controllers;
 
 import com.team1.investsim.dtos.AssetDTO;
 import com.team1.investsim.entities.AssetEntity;
+import com.team1.investsim.entities.HistoricalDataEntity;
 import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import com.team1.investsim.exceptions.IllegalDateException;
 import com.team1.investsim.mappers.AssetMapper;
+import com.team1.investsim.mappers.HistoricalDataMapper;
 import com.team1.investsim.services.AssetService;
+import com.team1.investsim.services.HistoricalDataService;
 import com.team1.investsim.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +28,13 @@ public class AssetController {
     private AssetService assetService;
 
     @Autowired
+    private HistoricalDataService historicalDataService;
+
+    @Autowired
     private AssetMapper assetMapper;
+
+    @Autowired
+    private HistoricalDataMapper historicalDataMapper;
 
     private static final String DEFAULT_DATE_FORMAT = DateUtil.ISO8601_DATE_PATTERN;
 
@@ -52,20 +61,26 @@ public class AssetController {
         try {
             LocalDateTime today = DateUtil.getStartOfDay(LocalDateTime.now());
             if (date != null && !date.isEmpty()) {
-                return ResponseEntity.ok(assetEntity.getHistoricalDataByDate(DateUtil.stringToDate(date, DEFAULT_DATE_FORMAT)));
+                HistoricalDataEntity historicalDataEntity = assetEntity.getHistoricalDataByDate(DateUtil.stringToDate(date, DEFAULT_DATE_FORMAT));
+                return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveHistoricalData(historicalDataEntity)));
             }
+            List<HistoricalDataEntity> period;
             if ((startDate != null && !startDate.isEmpty()) || (endDate != null && !endDate.isEmpty())) {
                 if (startDate == null || startDate.isEmpty()) {
-                    return ResponseEntity.ok(assetEntity.getHistoricalDataByPeriod(today.minusDays(30), DateUtil.stringToDate(endDate, DEFAULT_DATE_FORMAT)));
+                    period = assetEntity.getHistoricalDataByPeriod(today.minusDays(30), DateUtil.stringToDate(endDate, DEFAULT_DATE_FORMAT));
+                    return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveAllHistoricalData(period)));
                 }
                 else if (endDate == null || endDate.isEmpty()) {
-                    return ResponseEntity.ok(assetEntity.getHistoricalDataByPeriod(DateUtil.stringToDate(startDate, DEFAULT_DATE_FORMAT), today));
+                    period = assetEntity.getHistoricalDataByPeriod(DateUtil.stringToDate(startDate, DEFAULT_DATE_FORMAT), today);
+                    return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveAllHistoricalData(period)));
                 }
                 else {
-                    return ResponseEntity.ok(assetEntity.getHistoricalDataByPeriod(DateUtil.stringToDate(startDate, DEFAULT_DATE_FORMAT), DateUtil.stringToDate(endDate, DEFAULT_DATE_FORMAT)));
+                    period = assetEntity.getHistoricalDataByPeriod(DateUtil.stringToDate(startDate, DEFAULT_DATE_FORMAT), DateUtil.stringToDate(endDate, DEFAULT_DATE_FORMAT));
+                    return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveAllHistoricalData(period)));
                 }
             }
-            return ResponseEntity.ok(assetEntity.getHistoricalDataByPeriod(today.minusDays(30), today));
+            period = assetEntity.getHistoricalDataByPeriod(today.minusDays(30), today);
+            return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveAllHistoricalData(period)));
         } catch (HistoricalDataNotFoundException | IllegalDateException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado: " + e.getLocalizedMessage());
         }

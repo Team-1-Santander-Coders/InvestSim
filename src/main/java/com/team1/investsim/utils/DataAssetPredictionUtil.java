@@ -17,7 +17,9 @@ public class DataAssetPredictionUtil {
         String pmmlName = String.format("model_%S.pmml", asset.getTicker());
         ModelEvaluator<?> modelEvaluator = loadStockPricePMML(pmmlName);
         HistoricalDataEntity lastData = asset.getHistoricalData().getLast();
-        return predictFuturePrices(lastData, futureDate, modelEvaluator);
+        HistoricalDataEntity predictedData = predictFuturePrices(lastData, futureDate, modelEvaluator);
+        predictedData.setAsset(asset);
+        return predictedData;
     }
 
     private static ModelEvaluator<?> loadStockPricePMML(String pmmlName) throws Exception {
