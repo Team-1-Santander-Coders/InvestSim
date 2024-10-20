@@ -76,7 +76,6 @@ public class AssetEntity implements Identifiable {
         List<HistoricalDataEntity> historicalDataEntities = new ArrayList<>();
 
         for (LocalDateTime day : daysBetween) {
-            System.out.println(day);
             historicalDataEntities.add(getHistoricalDataByDate(day));
         }
 

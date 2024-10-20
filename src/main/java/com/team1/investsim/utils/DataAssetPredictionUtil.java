@@ -45,10 +45,10 @@ public class DataAssetPredictionUtil {
 
         HistoricalDataEntity predictedData = new HistoricalDataEntity();
         predictedData.setDate(futureDate);
-        predictedData.setOpenPrice(BigDecimal.ZERO);
-        predictedData.setHighPrice(BigDecimal.ZERO);
-        predictedData.setLowPrice(BigDecimal.ZERO);
-        predictedData.setClosePrice(new BigDecimal(Double.parseDouble(results)));
+        predictedData.setOpenPrice(lastData.getOpenPrice());
+        predictedData.setHighPrice(lastData.getHighPrice());
+        predictedData.setLowPrice(lastData.getLowPrice());
+        predictedData.setClosePrice(BigDecimal.valueOf(Double.parseDouble(results)));
         predictedData.setVolume(lastData.getVolume());
 
         return predictedData;
