@@ -8,6 +8,8 @@ import com.team1.investsim.exceptions.InvalidDocumentException;
 import com.team1.investsim.exceptions.InvalidEmailException;
 import com.team1.investsim.exceptions.InvalidPasswordException;
 import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -35,6 +37,13 @@ public class UserEntity implements Identifiable {
     @JoinColumn(name = "portofolios", referencedColumnName = "id")
     private PortfolioEntity portfolio;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<TokenEntity> tokens;
+
+    public List<TokenEntity> getTokens() {
+        return tokens;
+    }
+
     @Override
     public long getId() {
         return id;
@@ -59,7 +68,7 @@ public class UserEntity implements Identifiable {
         Optional<UserType> userType = getTypeByDocument(document);
         if (userType.isEmpty() || treatedDocument.isEmpty()) throw new InvalidDocumentException("Documento informado é inválido.");
 
-        return new UserEntity(validateEmail(email), treatedDocument.get(), validatePassword(password), userType.get());
+        return new UserEntity(validateEmail(email), treatedDocument.get(), password, userType.get());
     }
 
     public String getEmail() {

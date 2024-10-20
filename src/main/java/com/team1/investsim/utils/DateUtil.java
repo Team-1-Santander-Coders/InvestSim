@@ -18,6 +18,7 @@ public class DateUtil {
     public static final String ISO8601_DATE_PATTERN = "yyyy-MM-dd";
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_PATTERN);
     private static final double DAY_DURATION = ChronoUnit.DAYS.getDuration().getSeconds();
+    public static final String ZONEOFFSET = "-03:00";
 
     public static String dateToString(LocalDateTime date) {
         return date.format(DEFAULT_FORMATTER);

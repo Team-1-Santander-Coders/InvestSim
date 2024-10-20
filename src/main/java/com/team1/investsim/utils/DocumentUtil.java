@@ -1,7 +1,6 @@
 package com.team1.investsim.utils;
 
 import com.team1.investsim.entities.types.UserType;
-import com.team1.investsim.exceptions.InvalidDocumentException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,42 +47,88 @@ public class DocumentUtil {
     }
 
     private static boolean isValidCPF(String cpf) {
-        if (cpf.matches(INVALID_CPF_PATTERN)) {
+        if (cpf == null || cpf.matches(INVALID_CPF_PATTERN)) {
             return false;
         }
-        return checkDocumentDigits(cpf, CPF_LENGTH - 2, 9, 11, new int[]{10, 9, 8, 7, 6, 5, 4, 3, 2});
+
+        int[] numbers = new int[11];
+        for (int i = 0; i < 11; i++) {
+            numbers[i] = Character.getNumericValue(cpf.charAt(i));
+        }
+
+        int sum = 0;
+        for (int i = 0; i < 9; i++) {
+            sum += numbers[i] * (10 - i);
+        }
+
+        int firstDigit = 11 - (sum % 11);
+        if (firstDigit > 9) {
+            firstDigit = 0;
+        }
+
+        if (numbers[9] != firstDigit) {
+            return false;
+        }
+
+        sum = 0;
+        for (int i = 0; i < 10; i++) {
+            sum += numbers[i] * (11 - i);
+        }
+
+        int secondDigit = 11 - (sum % 11);
+        if (secondDigit > 9) {
+            secondDigit = 0;
+        }
+
+        return numbers[10] == secondDigit;
     }
 
     private static boolean isValidCNPJ(String cnpj) {
-        if (cnpj.matches(INVALID_CNPJ_PATTERN)) {
-            return false;
-        }
-        return checkDocumentDigits(cnpj, CNPJ_LENGTH - 2, 12, 13, new int[]{5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2});
-    }
-
-    private static boolean checkDocumentDigits(String document, int numDigits, int firstIndex, int lastIndex, int[] weights) {
-        int firstDigit = calculateDigit(document, numDigits, weights);
-        if (firstDigit != (document.charAt(firstIndex) - '0')) {
+        if (cnpj == null || cnpj.matches(INVALID_CNPJ_PATTERN)) {
             return false;
         }
 
-        int secondDigit = calculateDigit(document, numDigits + 1, weights);
-        return secondDigit == (document.charAt(lastIndex) - '0');
-    }
+        int[] numbers = new int[14];
+        for (int i = 0; i < 14; i++) {
+            numbers[i] = Character.getNumericValue(cnpj.charAt(i));
+        }
 
-    private static int calculateDigit(String document, int numDigits, int[] weights) {
+        int[] weight1 = {5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
         int sum = 0;
-        for (int i = 0; i < numDigits; i++) {
-            sum += (document.charAt(i) - '0') * weights[i % weights.length];
+        for (int i = 0; i < 12; i++) {
+            sum += numbers[i] * weight1[i];
         }
-        int digit = 11 - (sum % 11);
-        return (digit >= 10) ? 0 : digit;
+
+        int firstDigit = 11 - (sum % 11);
+        if (firstDigit > 9) {
+            firstDigit = 0;
+        }
+
+        if (numbers[12] != firstDigit) {
+            return false;
+        }
+
+        int[] weight2 = {6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
+        sum = 0;
+        for (int i = 0; i < 13; i++) {
+            sum += numbers[i] * weight2[i];
+        }
+
+        int secondDigit = 11 - (sum % 11);
+        if (secondDigit > 9) {
+            secondDigit = 0;
+        }
+
+        return numbers[13] == secondDigit;
     }
 
     public static Optional<UserType> getTypeByDocument(String document) {
-        int length = clearDocument(document).length();
+        String cleanDoc = clearDocument(document);
+        if (cleanDoc.isEmpty()) {
+            return Optional.empty();
+        }
 
-        return switch (length) {
+        return switch (cleanDoc.length()) {
             case CPF_LENGTH -> Optional.of(UserType.FISICA);
             case CNPJ_LENGTH -> Optional.of(UserType.JURIDICA);
             default -> Optional.empty();
