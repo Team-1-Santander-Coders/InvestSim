@@ -86,7 +86,7 @@ public class AssetController {
     @GetMapping("/assetname/{ticker}")
     public ResponseEntity<?> getNameByTicker(@PathVariable ("ticker") String ticker){
 
-        String name ="";
+        String name = "";
         Optional<List<String[]>> companiesList = CSVProcessor.processCSV("empresas.csv");
         System.out.println(companiesList.isPresent());
         try {
