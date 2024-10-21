@@ -1,10 +1,12 @@
 package com.team1.investsim.entities;
 
 import com.team1.investsim.exceptions.IllegalDateException;
+import com.team1.investsim.repositories.HistoricalDataRepository;
 import com.team1.investsim.utils.DataAssetPredictionUtil;
 import com.team1.investsim.utils.DateUtil;
 import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

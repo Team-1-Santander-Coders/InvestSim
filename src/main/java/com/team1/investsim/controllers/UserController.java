@@ -157,7 +157,9 @@ public class UserController {
         UserEntity authenticatedUser = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         double transactionPrice = assetHoldingEntityList.getFirst().getAsset().getValueByDate(LocalDateTime.now()).doubleValue() * sellQuantity;
 
-        for(AssetHoldingEntity assetHoldingEntity : assetHoldingEntityList){
+        double totalSold = 0;
+
+        for (AssetHoldingEntity assetHoldingEntity : assetHoldingEntityList) {
             double holdingQuantity = assetHoldingEntity.getQuantity();
             double sellAmount = Math.min(holdingQuantity, sellQuantity);
             double newQuantity = holdingQuantity - sellAmount;
@@ -167,16 +169,16 @@ public class UserController {
 
             if (newQuantity == 0) userService.removeAssetHolding(authenticatedUser, assetHoldingEntity);
 
+            totalSold += sellAmount;
             sellQuantity -= sellAmount;
 
-            if (sellQuantity == 0)  break;
+            if (sellQuantity == 0) break;
         }
 
-        if (sellQuantity > 0) {
+        if (totalSold == 0) {
             throw new IllegalArgumentException("Quantidade insuficiente de ativos para vender.");
         }
 
-        return new TransactionEntity(assetHoldingEntityList.getFirst().getAsset(), LocalDateTime.now(), sellQuantity, transactionPrice, TransactionType.SELL);
-
+        return new TransactionEntity(assetHoldingEntityList.getFirst().getAsset(), LocalDateTime.now(), totalSold, transactionPrice, TransactionType.SELL);
     }
 }

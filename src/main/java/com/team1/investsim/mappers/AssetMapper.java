@@ -44,9 +44,6 @@ public class AssetMapper {
                 assetEntity.getValueByDate(LocalDateTime.now()),
                 assetEntity.getDailyChange(LocalDateTime.now()),
                 historicalDataEntity.getOpenPrice(),
-                historicalDataEntity.getClosePrice(),
-                historicalDataEntity.getHighPrice(),
-                historicalDataEntity.getLowPrice(),
                 historicalDataEntity.getVolume()
         );
     }

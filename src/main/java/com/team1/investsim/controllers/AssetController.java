@@ -1,6 +1,7 @@
 package com.team1.investsim.controllers;
 
 import com.team1.investsim.dtos.AssetDTO;
+import com.team1.investsim.dtos.AssetSimpleDTO;
 import com.team1.investsim.entities.AssetEntity;
 import com.team1.investsim.entities.HistoricalDataEntity;
 import com.team1.investsim.exceptions.AssetNotFoundException;
@@ -40,7 +41,7 @@ public class AssetController {
     @GetMapping("/assets")
     public ResponseEntity<?> getAssetsList() {
         try {
-            List<AssetDTO> assetList = assetMapper.toDto(assetService.getAllAssets());
+            List<AssetSimpleDTO> assetList = assetService.getAllAssetsAsDTO();
             return ResponseEntity.ok(assetList);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado: " + e.getLocalizedMessage());
@@ -53,31 +54,46 @@ public class AssetController {
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "date", required = false) String date) {
+
         Optional<AssetEntity> asset = assetService.getAssetById(Long.parseLong(id));
 
-        if (asset.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ID não localizado");
+        if (asset.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ID não localizado");
+        }
+
         AssetEntity assetEntity = asset.get();
         try {
             LocalDateTime today = DateUtil.getStartOfDay(LocalDateTime.now());
+            List<HistoricalDataEntity> historicalDataEntities;
+
             if (date != null && !date.isEmpty()) {
-                HistoricalDataEntity historicalDataEntity = assetEntity.getHistoricalDataByDate(DateUtil.stringToDate(date, DEFAULT_DATE_FORMAT));
-                return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveHistoricalData(historicalDataEntity)));
+                historicalDataEntities = assetService.getHistoricalDataByPeriod(assetEntity.getId(),
+                        DateUtil.stringToDate(date, DEFAULT_DATE_FORMAT),
+                        DateUtil.stringToDate(date, DEFAULT_DATE_FORMAT));
+                return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveAllHistoricalData(historicalDataEntities)));
             }
-            List<HistoricalDataEntity> period;
+
             if ((startDate != null && !startDate.isEmpty()) || (endDate != null && !endDate.isEmpty())) {
                 if (startDate == null || startDate.isEmpty()) {
-                    period = assetEntity.getHistoricalDataByPeriod(today.minusDays(30), DateUtil.stringToDate(endDate, DEFAULT_DATE_FORMAT));
-                    return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveAllHistoricalData(period)));
+                    historicalDataEntities = assetService.getHistoricalDataByPeriod(assetEntity.getId(),
+                            today.minusDays(15),
+                            DateUtil.stringToDate(endDate, DEFAULT_DATE_FORMAT));
                 } else if (endDate == null || endDate.isEmpty()) {
-                    period = assetEntity.getHistoricalDataByPeriod(DateUtil.stringToDate(startDate, DEFAULT_DATE_FORMAT), today);
-                    return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveAllHistoricalData(period)));
+                    historicalDataEntities = assetService.getHistoricalDataByPeriod(assetEntity.getId(),
+                            DateUtil.stringToDate(startDate, DEFAULT_DATE_FORMAT),
+                            today);
                 } else {
-                    period = assetEntity.getHistoricalDataByPeriod(DateUtil.stringToDate(startDate, DEFAULT_DATE_FORMAT), DateUtil.stringToDate(endDate, DEFAULT_DATE_FORMAT));
-                    return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveAllHistoricalData(period)));
+                    historicalDataEntities = assetService.getHistoricalDataByPeriod(assetEntity.getId(),
+                            DateUtil.stringToDate(startDate, DEFAULT_DATE_FORMAT),
+                            DateUtil.stringToDate(endDate, DEFAULT_DATE_FORMAT));
                 }
+                return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveAllHistoricalData(historicalDataEntities)));
             }
-            period = assetEntity.getHistoricalDataByPeriod(today.minusDays(30), today);
-            return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveAllHistoricalData(period)));
+
+            historicalDataEntities = assetService.getHistoricalDataByPeriod(assetEntity.getId(),
+                    today.minusDays(15),
+                    today);
+            return ResponseEntity.ok(historicalDataMapper.toDTO(historicalDataService.saveAllHistoricalData(historicalDataEntities)));
         } catch (HistoricalDataNotFoundException | IllegalDateException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado: " + e.getLocalizedMessage());
         }
@@ -87,7 +103,7 @@ public class AssetController {
     public ResponseEntity<?> getNameByTicker(@PathVariable ("ticker") String ticker){
 
         String name = "";
-        Optional<List<String[]>> companiesList = CSVProcessor.processCSV("empresas.csv");
+        Optional<List<String[]>> companiesList = CSVProcessor.processCSV("src/main/resources/data/empresas.csv");
         try {
             if(companiesList.isPresent()) {
                 for (String[] row : companiesList.get()) {

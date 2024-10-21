@@ -14,6 +14,11 @@ public class HistoricalDataService {
     private HistoricalDataRepository historicalDataRepository;
 
     public HistoricalDataEntity saveHistoricalData(HistoricalDataEntity historicalData) {
+        if (isHistoricalDataRegistered(historicalData)) {
+            long id = getAlreadyRegisteredHistoricalData(historicalData).get().getId();
+            historicalData.setId(id);
+            return historicalDataRepository.saveAndFlush(historicalData);
+        }
         return historicalDataRepository.saveAndFlush(historicalData);
     }
 
@@ -27,6 +32,16 @@ public class HistoricalDataService {
 
     public Optional<HistoricalDataEntity> getHistoricalDataById(Long id) {
         return historicalDataRepository.findById(id);
+    }
+
+    public Optional<HistoricalDataEntity> getAlreadyRegisteredHistoricalData(HistoricalDataEntity historicalData) {
+        return historicalDataRepository.findAll().stream()
+                .filter(registeredHistoricalData -> registeredHistoricalData.equals(historicalData))
+                .findFirst();
+    }
+
+    public boolean isHistoricalDataRegistered(HistoricalDataEntity historicalData) {
+        return historicalDataRepository.findAll().stream().anyMatch(registeredHistoricalData -> registeredHistoricalData.equals(historicalData));
     }
 
     public long countHistoricalData() {

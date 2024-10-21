@@ -11,15 +11,20 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class DataAssetPredictionUtil {
-    public static HistoricalDataEntity predictAssetHistoricalData(AssetEntity asset, LocalDateTime futureDate) throws Exception {
+    private static final Random random = new Random();
+    public static HistoricalDataEntity predictAssetHistoricalData(AssetEntity asset, LocalDateTime futureDate) {
         String pmmlName = String.format("model_%S.pmml", asset.getTicker());
-        ModelEvaluator<?> modelEvaluator = loadStockPricePMML(pmmlName);
-        HistoricalDataEntity lastData = asset.getHistoricalData().getLast();
-        HistoricalDataEntity predictedData = predictFuturePrices(lastData, futureDate, modelEvaluator);
-        predictedData.setAsset(asset);
-        return predictedData;
+        ModelEvaluator<?> modelEvaluator;
+        try {
+            modelEvaluator = loadStockPricePMML(pmmlName);
+            HistoricalDataEntity lastData = asset.getHistoricalData().getLast();
+            return predictFuturePrices(lastData, futureDate, modelEvaluator);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static ModelEvaluator<?> loadStockPricePMML(String pmmlName) throws Exception {
@@ -50,12 +55,26 @@ public class DataAssetPredictionUtil {
 
         HistoricalDataEntity predictedData = new HistoricalDataEntity();
         predictedData.setDate(futureDate);
-        predictedData.setOpenPrice(lastData.getOpenPrice());
-        predictedData.setHighPrice(lastData.getHighPrice());
-        predictedData.setLowPrice(lastData.getLowPrice());
+        predictedData.setOpenPrice(BigDecimal.valueOf(randomizePrice(lastData.getOpenPrice().doubleValue())));
+        predictedData.setHighPrice(BigDecimal.valueOf(randomizePrice(lastData.getHighPrice().doubleValue())));
+        predictedData.setLowPrice(BigDecimal.valueOf(randomizePrice(lastData.getLowPrice().doubleValue())));
         predictedData.setClosePrice(BigDecimal.valueOf(predictedClose));
-        predictedData.setVolume(lastData.getVolume());
+        predictedData.setVolume(randomizeVolume(lastData.getVolume()));
+        predictedData.setAsset(lastData.getAsset());
 
         return predictedData;
+    }
+
+    private static double randomizePrice(double originalPrice) {
+        double stdDev = originalPrice * 0.1;
+        double randomValue = originalPrice + stdDev * random.nextGaussian();
+        return Math.abs(randomValue);
+    }
+
+    private static long randomizeVolume(long originalVolume) {
+        double stdDev = originalVolume * 0.30;
+        double limitedGaussian = Math.max(Math.min(random.nextGaussian(), 2), -2);
+        double randomValue = originalVolume + stdDev * limitedGaussian;
+        return Math.round(Math.abs(randomValue));
     }
 }
