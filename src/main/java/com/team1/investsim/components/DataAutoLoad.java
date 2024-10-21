@@ -25,11 +25,11 @@ public class DataAutoLoad {
     public DataAutoLoad(AssetService assetService, DataLoaderService dataLoaderService) {
         this.assetService = assetService;
         this.dataLoaderService = dataLoaderService;
-        /*
+
         if (assetService.countAssets() <= 10) {
             System.out.println("Loading data...");
             loadAssetsAndHistoricalData();
-        }*/
+        }
     }
 
     private void loadAssetsAndHistoricalData() {
@@ -37,9 +37,6 @@ public class DataAutoLoad {
         List<String[]> tickersList = CSVProcessor.processCSV(companyNamesPath).get();
         for (String[] ticker : tickersList) {
             AssetEntity asset = new AssetEntity();
-            if (ticker[0].equalsIgnoreCase("mmm")) {
-                asset.setId(1L);
-            }
 
             asset.setTicker(ticker[0]);
             String dataToLoadPath = "src/main/resources/data/sp500_data.csv";

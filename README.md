@@ -1,9 +1,29 @@
 <p align="center"></p>
 
-# InvestSim 💰    
+# InvestSim 💰
 
+## Nosso projeto
 
-(INSERIR UMA FOTO DA HOMEPAGE)
+### Home
+
+<img src="images/grafico.jpg">
+
+### Lista de ações do usuário
+
+<img src="images/comprar.jpg">
+
+### Lista de ações do usuário
+
+<img src="images/lista.jpg">
+
+### Gerenciamento da ação com predição dos dados
+
+<img src="images/gerenciar.jpg">
+
+### Histórico de transações do usuário
+
+<img src="images/historico.jpg">
+
 
 ## Descrição
 
@@ -20,23 +40,28 @@ O projeto tem como inovação o uso de Machine Learning sendo capaz de analisar,
 
 - **Mockito**: Utilizado para criar mocks durante a execução de testes, facilitando o isolamento de componentes.
 
-- **postgresql**: O driver JDBC para conectar a aplicação a um banco de dados PostgreSQL.
+- **DeepLearning4Java**: Utilizado para fazer a predição dos dados.
+
+- **Univocity**: Biblioteca focada em processamento de CSVs.
+
+- **PostgreSQL**: Banco de dados robusto para melhor gerenciamento de grandes quantidades de dados.
 
 ## Regras de negócio do projeto
 - **RN1**: Escolher um arquivo CSV com dados reais disponíveis online:
 - **RN2**: Utilizar Streams para ler, Filter, Reduce, Map.
 - **RN3**: Possibilidade de análise, ter liberdade para explorar, ler e manipular dos arquivos usando as técnicas aprendidas no módulo.
 - **Objetivo**:
-  - Aplicar programação funcional (usando map, filter, reduce) no processamento de dados reais.
-  - Desenvolver habilidades de manipulação de arquivos CSV com Streams.
-  - Praticar a lógica e a análise de dados em um cenário realista.
-    
- ## Instalação
- ### Pré-Requisitos
- - Java Development Kit (JDK) instalado.
- - IDE (como IntelliJ IDEA) configurada para desenvolvimento em Java.
+    - Aplicar programação funcional (usando map, filter, reduce) no processamento de dados reais.
+    - Desenvolver habilidades de manipulação de arquivos CSV com Streams.
+    - Praticar a lógica e a análise de dados em um cenário realista.
 
- - ## Uso
+## Instalação
+### Pré-Requisitos
+- Java Development Kit (JDK) instalado.
+- IDE (como IntelliJ IDEA) configurada para desenvolvimento em Java.
+- Baixar o CSV [sp500_data.csv](https://www.kaggle.com/datasets/joebeachcapital/s-and-p500-index-stocks-daily-updated) na pasta resources/data
+
+- ## Uso
 A aplicação permite o gerenciamento de ações, portfólio, e variações das ações das empresas selecionadas. As seguintes funcionalidades estão disponíveis:
 
 - **Gerenciamento de ações**:
@@ -46,10 +71,10 @@ A aplicação permite o gerenciamento de ações, portfólio, e variações das 
 - **Autenticação de Usuários**:
     - Usuários podem se registrar e fazer login, sendo pessoa física ou juridica.
     - Autenticação de usuários com Spring Security.
- 
+
 -**Análise precisa e predição com Machine Learning**:
-    - Usuários podem analisar as tendências de mercado com precisão e segurança de onde aplicar seu dinheiro em ações, graças a um treinamento de MAIS de 40 anos de dados com movimentações
-    de valores das ações.
+- Usuários podem analisar as tendências de mercado com precisão e segurança de onde aplicar seu dinheiro em ações, graças a um treinamento de MAIS de 40 anos de dados com movimentações
+  de valores das ações.
 
 ## 🛠 Desafios e Soluções
 
@@ -59,28 +84,11 @@ a equipe se preocupou em superar e subir o nível dos requisitos e entrega desig
 ### Principais Desafios:
 
 1. **Autenticação de usuários com SPRING SECURITY**
-  - Implementamos uma autenticação eficiente utilizando a biblioteca SPRING SECURITY, onde só é possível cadastrar o usuário no site caso o CPF ou CNPJ seja válido.
+- Implementamos uma autenticação eficiente utilizando a biblioteca Spring Security, que faz todo gerenciamento de autenticação do usuário.
 
-2. ****
-
-3. ****
-
-## Funcionalidades:
+2. **Tratamento de dados de forma efetiva**
+- Por serem muitos dados é difícil entrega-los com agilidade para o usuário;
 
 
-
-## Estrutura do projeto:
-
-
-
-## 🗒️ Licença:
-
- 
-
- 
-      
-
-
-
-
-
+3. **Gerar os modelos de Predição:**
+- Como eram muitas empresas diferentes e muitos dados a tratar, foi um pouco difícil de gerar modelos precisos que atendessem a nossa exigência de precisão.
