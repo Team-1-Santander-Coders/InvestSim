@@ -84,11 +84,9 @@ public class UserController {
             }
     }
 
-    @PostMapping("/buyAsset")
+    @PostMapping("/buyasset")
     public ResponseEntity<?> buyAsset(@RequestBody AssetTransactionRequestDTO assetTransactionRequestDTO) {
-
         try {
-            System.out.println(assetTransactionRequestDTO.assetEntityId());
             Optional<AssetEntity> assetEntity = assetService.getAssetById(assetTransactionRequestDTO.assetEntityId());
             if (assetEntity.isEmpty()) throw new AssetNotFoundException();
             if (assetTransactionRequestDTO.quantity() <= 0) throw new IllegalArgumentException("A quantidade não pode ser inferior ou igual a 0.");
@@ -106,18 +104,18 @@ public class UserController {
             portfolioEntity.addTransaction(transactionEntity);
             portfolioEntity.addAssetHolding(assetHoldingEntity);
 
-            transactionService.saveTransaction(transactionEntity);
+            TransactionDTO transactionDTO = transactionMapper.toDTO(transactionService.saveTransaction(transactionEntity));
             assetHoldingService.saveAssetHolding(assetHoldingEntity);
             portfolioService.savePortfolio(portfolioEntity);
 
-            return ResponseEntity.ok(transactionEntity);
+            return ResponseEntity.ok(transactionDTO);
 
         } catch (AssetNotFoundException | IllegalArgumentException  | HistoricalDataNotFoundException e ) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + e.getLocalizedMessage());
         }
     }
 
-    @PostMapping("/sellAssets")
+    @PostMapping("/sellassets")
     public ResponseEntity<?> sellAssets(@RequestBody AssetTransactionRequestDTO assetTransactionRequestDTO) {
         UserEntity authenticatedUser = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<List<AssetHoldingEntity>> assetHoldingEntity = authenticatedUser.getPortfolio().getAssetHoldingByAssetId(assetTransactionRequestDTO.assetEntityId());

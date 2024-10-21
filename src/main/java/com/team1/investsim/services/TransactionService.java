@@ -16,7 +16,7 @@ public class TransactionService {
 
     public TransactionService(TransactionRepository transactionRepository) { this.transactionRepository = transactionRepository; }
 
-    public void saveTransaction(TransactionEntity transactionEntity) { transactionRepository.saveAndFlush(transactionEntity); }
+    public TransactionEntity saveTransaction(TransactionEntity transactionEntity) { return transactionRepository.saveAndFlush(transactionEntity); }
 
     public List<TransactionEntity> getAllTransactions() { return transactionRepository.findAll(); }
 
