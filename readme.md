@@ -4,7 +4,7 @@
 
 <img src="Imagens/grafico.jpg"></br>
 <img src="Imagens/lista.jpg"></br>
-<img src="Imagens/Comprar.jpg"></br>
+<img src="Imagens/comprar.jpg"></br>
 <img src="Imagens/gerenciar.jpg"></br>
 <img src="Imagens/historico.jpg"></br>
 
