@@ -33,22 +33,27 @@ public class DataAssetPredictionUtil {
 
     private static HistoricalDataEntity predictFuturePrices(HistoricalDataEntity lastData, LocalDateTime futureDate, ModelEvaluator<?> modelEvaluator) {
         Map<String, Double> arguments = new LinkedHashMap<>();
+
         arguments.put("Open", lastData.getOpenPrice().doubleValue());
         arguments.put("High", lastData.getHighPrice().doubleValue());
         arguments.put("Low", lastData.getLowPrice().doubleValue());
-        arguments.put("Close", lastData.getClosePrice().doubleValue());
         arguments.put("Volume", (double) lastData.getVolume());
+        arguments.put("Year", (double) futureDate.getYear());
+        arguments.put("Month", (double) futureDate.getMonthValue());
+        arguments.put("Day", (double) futureDate.getDayOfMonth());
+        arguments.put("Weekday", (double) futureDate.getDayOfWeek().getValue() - 1);
 
-        String results = modelEvaluator.evaluate(arguments).get("Close")
-                .toString()
-                .replaceAll("\\{result=|\\}", "");
+        Map<String, ?> results = modelEvaluator.evaluate(arguments);
+
+        double predictedClose = Double.parseDouble(results.get("Close").toString()
+                .replaceAll("\\{result=|}", ""));;
 
         HistoricalDataEntity predictedData = new HistoricalDataEntity();
         predictedData.setDate(futureDate);
         predictedData.setOpenPrice(lastData.getOpenPrice());
         predictedData.setHighPrice(lastData.getHighPrice());
         predictedData.setLowPrice(lastData.getLowPrice());
-        predictedData.setClosePrice(BigDecimal.valueOf(Double.parseDouble(results)));
+        predictedData.setClosePrice(BigDecimal.valueOf(predictedClose));
         predictedData.setVolume(lastData.getVolume());
 
         return predictedData;
