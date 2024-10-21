@@ -1,11 +1,16 @@
 package com.team1.investsim.entities;
 
+import com.team1.investsim.exceptions.IllegalDateException;
+import com.team1.investsim.repositories.HistoricalDataRepository;
+import com.team1.investsim.utils.DataAssetPredictionUtil;
 import com.team1.investsim.utils.DateUtil;
 import com.team1.investsim.exceptions.HistoricalDataNotFoundException;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,6 +37,8 @@ public class AssetEntity implements Identifiable {
         this.id = id;
     }
 
+    public AssetEntity(){}
+
     public BigDecimal getReturn(LocalDateTime start, LocalDateTime end) throws HistoricalDataNotFoundException {
         BigDecimal startValue = this.getHistoricalDataByDate(start).getClosePrice();
         BigDecimal endValue = this.getHistoricalDataByDate(end).getClosePrice();
@@ -50,6 +57,10 @@ public class AssetEntity implements Identifiable {
         this.ticker = ticker;
     }
 
+    public BigDecimal getDailyChange(LocalDateTime today) throws HistoricalDataNotFoundException {
+        return getValueByDate(today).subtract(getValueByDate(today.minusDays(1)));
+    }
+
     public List<HistoricalDataEntity> getHistoricalData() {
         return historicalData;
     }
@@ -62,11 +73,35 @@ public class AssetEntity implements Identifiable {
         this.historicalData.add(historicalData);
     }
 
+    public List<HistoricalDataEntity> getHistoricalDataByPeriod(LocalDateTime start, LocalDateTime end) throws IllegalDateException, HistoricalDataNotFoundException {
+        List<LocalDateTime> daysBetween = DateUtil.getDaysBetweenDates(start, end);
+        List<HistoricalDataEntity> historicalDataEntities = new ArrayList<>();
+
+        for (LocalDateTime day : daysBetween) {
+            historicalDataEntities.add(getHistoricalDataByDate(day));
+        }
+
+        return historicalDataEntities;
+    }
+
     public HistoricalDataEntity getHistoricalDataByDate(LocalDateTime date) throws HistoricalDataNotFoundException {
-        return historicalData.stream()
-                .filter(historicalData -> historicalData.getDate().isEqual(date))
-                .findFirst()
-                .orElseThrow(() -> new HistoricalDataNotFoundException("Dado histórico não encontrado para " + DateUtil.dateToString(date)));
+        LocalDateTime startOfDay = DateUtil.getStartOfDay(date);
+        HistoricalDataEntity historicalDataByDate;
+
+        try {
+            historicalDataByDate = historicalData.stream()
+                    .filter(historicalData -> historicalData.getDate().isEqual(startOfDay))
+                    .findFirst()
+                    .orElseThrow(() -> new HistoricalDataNotFoundException("Dado histórico não encontrado para " + DateUtil.dateToString(startOfDay)));
+        } catch (HistoricalDataNotFoundException e) {
+            try {
+                historicalDataByDate = DataAssetPredictionUtil.predictAssetHistoricalData(this, startOfDay);
+            } catch (Exception ex) {
+                throw new HistoricalDataNotFoundException(ex.getMessage());
+            }
+        }
+
+        return historicalDataByDate;
     }
 
     @Override

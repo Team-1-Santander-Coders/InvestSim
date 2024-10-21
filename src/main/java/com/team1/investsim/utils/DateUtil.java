@@ -5,16 +5,20 @@ import com.team1.investsim.exceptions.IllegalDateException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DateUtil {
     public static final String DEFAULT_DATE_PATTERN = "dd/MM/yyyy HH:mm:ss";
     public static final String DATE_WITHOUT_HOUR_PATTERN = "dd/MM/yyyy";
-    public static final String CSV_DATE_PATTERN = "yyyy-MM-dd";
+    public static final String ISO8601_DATE_PATTERN = "yyyy-MM-dd";
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_PATTERN);
     private static final double DAY_DURATION = ChronoUnit.DAYS.getDuration().getSeconds();
+    public static final String ZONEOFFSET = "-03:00";
 
     public static String dateToString(LocalDateTime date) {
         return date.format(DEFAULT_FORMATTER);
@@ -27,7 +31,7 @@ public class DateUtil {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
 
-        if (datePattern.equals(CSV_DATE_PATTERN) || datePattern.equals(DATE_WITHOUT_HOUR_PATTERN)) {
+        if (datePattern.equals(ISO8601_DATE_PATTERN) || datePattern.equals(DATE_WITHOUT_HOUR_PATTERN)) {
             LocalDate date = LocalDate.parse(dateStr, formatter);
             return date.atStartOfDay();
         }
@@ -39,7 +43,7 @@ public class DateUtil {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
 
-            if (datePattern.equals(CSV_DATE_PATTERN) || datePattern.equals(DATE_WITHOUT_HOUR_PATTERN)) {
+            if (datePattern.equals(ISO8601_DATE_PATTERN) || datePattern.equals(DATE_WITHOUT_HOUR_PATTERN)) {
                 LocalDate date = LocalDate.parse(dateStr, formatter);
                 return date.getMonthValue() != 2 || date.getDayOfMonth() != 29 || date.isLeapYear();
             } else {
@@ -52,8 +56,29 @@ public class DateUtil {
         }
     }
 
+    public static List<LocalDateTime> getDaysBetweenDates(LocalDateTime startDate, LocalDateTime endDate) throws IllegalDateException {
+        List<LocalDateTime> daysBetween = new ArrayList<>();
+
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalDateException("A data de início deve ser anterior à data de término.");
+        }
+
+        LocalDate start = startDate.toLocalDate();
+        LocalDate end = endDate.toLocalDate();
+
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            daysBetween.add(date.atStartOfDay());
+        }
+
+        return daysBetween;
+    }
+
+    public static LocalDateTime getStartOfDay(LocalDateTime date) {
+        return date.with(LocalTime.MIN);
+    }
+
     public static boolean validateDifferenceBetweenDate(LocalDateTime startDate, LocalDateTime endDate) {
-        return startDate.isBefore(endDate);
+        return endDate.isBefore(startDate);
     }
 
     public static double calculateDifferenceBetweenDate(LocalDateTime startDate, LocalDateTime endDate) throws IllegalDateException {

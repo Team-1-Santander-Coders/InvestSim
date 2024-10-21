@@ -1,78 +1,137 @@
 package com.team1.investsim.utils;
 
+import com.team1.investsim.entities.types.UserType;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 public class DocumentUtil {
-    public static String cleanDocument(String document) {
+    public static final int CNPJ_LENGTH = 14;
+    public static final int CPF_LENGTH = 11;
+    private static final String INVALID_CPF_PATTERN = "(\\d)\\1{10}";
+    private static final String INVALID_CNPJ_PATTERN = "(\\d)\\1{13}";
+
+    private static final Map<String, Boolean> documentValidationCache = new HashMap<>();
+
+    public static Optional<String> validateAndClearDocument(String document) {
+        if (!isValidDocument(document)) {
+            return Optional.empty();
+        }
+        return Optional.of(clearDocument(document));
+    }
+
+    public static String clearDocument(String document) {
         if (document == null || document.isEmpty()) {
             return "";
         }
         return document.replaceAll("[^\\d]", "");
     }
 
-    public static boolean isValidDocument(String document) {
-        document = cleanDocument(document);
+    private static boolean isValidDocument(String document) {
+        document = clearDocument(document);
 
-        if (document.length() == 11) {
-            return isValidCPF(document);
+        if (documentValidationCache.containsKey(document)) {
+            return documentValidationCache.get(document);
         }
 
-        if (document.length() == 14) {
-            return isValidCNPJ(document);
-        }
+        boolean isValid = switch (document.length()) {
+            case CPF_LENGTH -> isValidCPF(document);
+            case CNPJ_LENGTH -> isValidCNPJ(document);
+            default -> false;
+        };
 
-        return false;
+        documentValidationCache.put(document, isValid);
+
+        return isValid;
     }
 
-    public static boolean isValidCPF(String cpf) {
-        if (cpf.length() != 11 || cpf.matches("(\\d)\\1{10}")) {
+    private static boolean isValidCPF(String cpf) {
+        if (cpf == null || cpf.matches(INVALID_CPF_PATTERN)) {
             return false;
         }
 
-        int sum = 0;
-        int digit;
-        for (int i = 0; i < 9; i++) {
-            sum += (10 - i) * (cpf.charAt(i) - '0');
+        int[] numbers = new int[11];
+        for (int i = 0; i < 11; i++) {
+            numbers[i] = Character.getNumericValue(cpf.charAt(i));
         }
 
-        digit = 11 - (sum % 11);
-        digit = (digit >= 10) ? 0 : digit;
-        if (digit != (cpf.charAt(9) - '0')) {
+        int sum = 0;
+        for (int i = 0; i < 9; i++) {
+            sum += numbers[i] * (10 - i);
+        }
+
+        int firstDigit = 11 - (sum % 11);
+        if (firstDigit > 9) {
+            firstDigit = 0;
+        }
+
+        if (numbers[9] != firstDigit) {
             return false;
         }
 
         sum = 0;
         for (int i = 0; i < 10; i++) {
-            sum += (11 - i) * (cpf.charAt(i) - '0');
+            sum += numbers[i] * (11 - i);
         }
 
-        digit = 11 - (sum % 11);
-        digit = (digit >= 10) ? 0 : digit;
-        return digit == (cpf.charAt(10) - '0');
+        int secondDigit = 11 - (sum % 11);
+        if (secondDigit > 9) {
+            secondDigit = 0;
+        }
+
+        return numbers[10] == secondDigit;
     }
 
-    public static boolean isValidCNPJ(String cnpj) {
-        if (cnpj.length() != 14 || cnpj.matches("(\\d)\\1{13}")) {
+    private static boolean isValidCNPJ(String cnpj) {
+        if (cnpj == null || cnpj.matches(INVALID_CNPJ_PATTERN)) {
             return false;
         }
 
-        int[] weights = {5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
+        int[] numbers = new int[14];
+        for (int i = 0; i < 14; i++) {
+            numbers[i] = Character.getNumericValue(cnpj.charAt(i));
+        }
+
+        int[] weight1 = {5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
         int sum = 0;
         for (int i = 0; i < 12; i++) {
-            sum += (cnpj.charAt(i) - '0') * weights[i % 8];
+            sum += numbers[i] * weight1[i];
         }
 
-        int digit1 = 11 - (sum % 11);
-        digit1 = (digit1 >= 10) ? 0 : digit1;
-        if (digit1 != (cnpj.charAt(12) - '0')) {
+        int firstDigit = 11 - (sum % 11);
+        if (firstDigit > 9) {
+            firstDigit = 0;
+        }
+
+        if (numbers[12] != firstDigit) {
             return false;
         }
 
+        int[] weight2 = {6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
         sum = 0;
         for (int i = 0; i < 13; i++) {
-            sum += (cnpj.charAt(i) - '0') * weights[i % 8];
+            sum += numbers[i] * weight2[i];
         }
 
-        int digit2 = 11 - (sum % 11);
-        digit2 = (digit2 >= 10) ? 0 : digit2;
-        return digit2 == (cnpj.charAt(13) - '0');
+        int secondDigit = 11 - (sum % 11);
+        if (secondDigit > 9) {
+            secondDigit = 0;
+        }
+
+        return numbers[13] == secondDigit;
+    }
+
+    public static Optional<UserType> getTypeByDocument(String document) {
+        String cleanDoc = clearDocument(document);
+        if (cleanDoc.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return switch (cleanDoc.length()) {
+            case CPF_LENGTH -> Optional.of(UserType.FISICA);
+            case CNPJ_LENGTH -> Optional.of(UserType.JURIDICA);
+            default -> Optional.empty();
+        };
     }
 }

@@ -29,6 +29,15 @@ public class AssetHoldingEntity implements Identifiable {
     @JoinColumn(name = "portfolio_id", nullable = false)
     private PortfolioEntity portfolio;
 
+    public AssetHoldingEntity(){}
+
+    public AssetHoldingEntity(AssetEntity assetEntity, double quantity, TransactionEntity buyTransaction, PortfolioEntity portfolio) {
+        this.asset = assetEntity;
+        this.quantity = quantity;
+        this.buyTransaction = buyTransaction;
+        this.portfolio = portfolio;
+    }
+
     public BigDecimal getValue(LocalDateTime date) throws HistoricalDataNotFoundException {
         return asset.getValueByDate(date).multiply(BigDecimal.valueOf(quantity));
     }
@@ -50,6 +59,8 @@ public class AssetHoldingEntity implements Identifiable {
     public void setAsset(AssetEntity asset) {
         this.asset = asset;
     }
+
+    public void setPortfolio(PortfolioEntity portfolio) { this.portfolio = portfolio;  }
 
     public double getQuantity() {
         return quantity;

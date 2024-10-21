@@ -1,14 +1,17 @@
 package com.team1.investsim.entities;
 
 import com.team1.investsim.entities.types.UserType;
-import static com.team1.investsim.utils.DocumentUtil.isValidDocument;
+import static com.team1.investsim.utils.DocumentUtil.*;
 import static com.team1.investsim.utils.UserUtil.*;
 
 import com.team1.investsim.exceptions.InvalidDocumentException;
 import com.team1.investsim.exceptions.InvalidEmailException;
 import com.team1.investsim.exceptions.InvalidPasswordException;
 import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @Table(name = "users")
@@ -34,6 +37,13 @@ public class UserEntity implements Identifiable {
     @JoinColumn(name = "portofolios", referencedColumnName = "id")
     private PortfolioEntity portfolio;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<TokenEntity> tokens;
+
+    public List<TokenEntity> getTokens() {
+        return tokens;
+    }
+
     @Override
     public long getId() {
         return id;
@@ -44,13 +54,29 @@ public class UserEntity implements Identifiable {
         this.id = id;
     }
 
+    public UserEntity() {}
+
+    private UserEntity(String email, String document, String password, UserType type) {
+        this.email = email;
+        this.document = document;
+        this.password = password;
+        this.type = type;
+    }
+
+    public static UserEntity createUser(String document, String email, String password) throws InvalidEmailException, InvalidPasswordException, InvalidDocumentException {
+        Optional<String> treatedDocument = validateAndClearDocument(document);
+        Optional<UserType> userType = getTypeByDocument(document);
+        if (userType.isEmpty() || treatedDocument.isEmpty()) throw new InvalidDocumentException("Documento informado é inválido.");
+
+        return new UserEntity(validateEmail(email), treatedDocument.get(), password, userType.get());
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) throws InvalidEmailException {
-        if (!isValidEmail(email)) throw new InvalidEmailException("Email inválido");
-        this.email = email;
+        this.email = validateEmail(email);
     }
 
     public String getDocument() {
@@ -58,16 +84,19 @@ public class UserEntity implements Identifiable {
     }
 
     public void setDocument(String document) throws InvalidDocumentException {
-        if (!isValidDocument(document)) throw new InvalidDocumentException("O documento informado é inválido");
-        this.document = document;
+        Optional<String> treatedDocument = validateAndClearDocument(document);
+        if (treatedDocument.isEmpty()) throw new InvalidDocumentException("Documento informado é inválido");
+        this.document = treatedDocument.get();
     }
 
     public UserType getType() {
         return type;
     }
 
-    public void setType(UserType type) {
-        this.type = type;
+    public void setType(String document) throws InvalidDocumentException {
+        Optional<UserType> userType = getTypeByDocument(document);
+        if (userType.isEmpty()) throw new InvalidDocumentException("Documento informado é inválido");
+        this.type = userType.get();
     }
 
     public String getPassword() {
@@ -75,8 +104,7 @@ public class UserEntity implements Identifiable {
     }
 
     public void setPassword(String password) throws InvalidPasswordException {
-        if (!isValidPassword(password)) throw new InvalidPasswordException("Senha inválida. Para ser válida é necessário ter pelo menos 8 dígitos, uma letra minúscula, uma letra maiúscula e um caractere especial");
-        this.password = password;
+        this.password = validatePassword(password);
     }
 
     public PortfolioEntity getPortfolio() {
@@ -91,11 +119,11 @@ public class UserEntity implements Identifiable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserEntity that)) return false;
-        return id == that.id || Objects.equals(document, that.document);
+        return id == that.id || Objects.equals(document, that.document) || Objects.equals(email, that.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, document);
+        return Objects.hash(id, document, email);
     }
 }

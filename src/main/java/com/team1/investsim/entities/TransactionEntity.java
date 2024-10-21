@@ -30,6 +30,16 @@ public class TransactionEntity implements Identifiable {
     @Column(nullable = false)
     private TransactionType type;
 
+    public TransactionEntity () {}
+
+    public TransactionEntity (AssetEntity assetEntity, LocalDateTime date, double quantity, double price, TransactionType type) {
+        this.asset = assetEntity;
+        this.date = date;
+        this.quantity = quantity;
+        this.price = price;
+        this.type = type;
+    }
+
     @Override
     public long getId() {
         return id;
