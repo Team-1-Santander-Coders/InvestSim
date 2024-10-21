@@ -2,11 +2,11 @@
 
 # InvestSim 💰
 
-<img src="Imagens/Gráfico da ação.jpg"></br>
-<img src="Imagens/lista de ações.jpg"></br>
-<img src="Imagens/Comprar ação.jpg"></br>
-<img src="Imagens/gerenciar ação.jpg"></br>
-<img src="Imagens/historico de transações.jpg"></br>
+<img src="Imagens/grafico.jpg"></br>
+<img src="Imagens/lista.jpg"></br>
+<img src="Imagens/Comprar.jpg"></br>
+<img src="Imagens/gerenciar.jpg"></br>
+<img src="Imagens/historico.jpg"></br>
 
 
 ## Descrição
