@@ -59,6 +59,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         return path.startsWith("/assets") ||
                 path.startsWith("/asset/") ||
+                path.startsWith("/assetname/") ||
                 path.equals("/login") ||
                 path.equals("/register");
     }

@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/assets").permitAll()
                         .requestMatchers(HttpMethod.GET,"/asset/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/assetname/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
                         .anyRequest().authenticated()

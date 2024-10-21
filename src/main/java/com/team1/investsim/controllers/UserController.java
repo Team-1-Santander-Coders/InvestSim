@@ -60,13 +60,6 @@ public class UserController {
         this.userService = userService;
     }
 
-
-    @GetMapping
-    public ResponseEntity<String> getUser() {
-        return ResponseEntity.ok("Sucesso!");
-    }
-
-
     @GetMapping("/portfolio")
     public ResponseEntity<?> getPortfolio() {
         UserEntity authenticatedUser = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -74,7 +67,6 @@ public class UserController {
         try {
             Optional<PortfolioDTO> portfolioDTO = Optional.ofNullable(portfolioMapper.toDto(authenticatedUser.getPortfolio()));
             return ResponseEntity.ok(portfolioDTO.orElseThrow(Exception::new));
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio inexistente: " + e.getLocalizedMessage());
         }

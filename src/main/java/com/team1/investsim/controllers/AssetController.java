@@ -88,14 +88,11 @@ public class AssetController {
 
         String name = "";
         Optional<List<String[]>> companiesList = CSVProcessor.processCSV("empresas.csv");
-        System.out.println(companiesList.isPresent());
         try {
             if(companiesList.isPresent()) {
                 for (String[] row : companiesList.get()) {
                     if (row[0].equalsIgnoreCase(ticker)) {
                         name = row[1];
-                        System.out.println(name);
-                        System.out.println(row[0]);
                         break;
                     }
                 }
