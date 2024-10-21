@@ -79,12 +79,3 @@ a equipe se preocupou em superar e subir o nível dos requisitos e entrega desig
 
 ## 🗒️ Licença:
 
- 
-
- 
-      
-
-
-
-
-
