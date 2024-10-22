@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: 'Roboto', sans-serif;
+}
+
+.p-menubar {
+  @apply bg-[#f0ecec] dark:bg-[#333] transition-colors duration-200;
+}
+
+.p-menubar .p-menuitem-link {
+  @apply transition-colors duration-200;
+}
+
+.p-menubar .p-menuitem-link:focus {
+  @apply outline-none ring-2 ring-blue-500;
+}
+
+.p-menubar-item-label {
+  font-weight: bold !important;
+}
+
+.p-menubar .p-menuitem-link .p-menuitem-text {
+  @apply text-gray-700 dark:text-gray-300 ;
+}
+
+.p-menubar .p-menuitem-link:hover .p-menuitem-text {
+  @apply text-gray-900 dark:text-white;
+}
+
+.p-menubar-mobile-active {
+  overflow: visible !important;
+}
+
+.card-title {
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  font-style: bold;
+  @apply text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-tight tracking-wide;
+}
+
+.card-text {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-style: bold;
+  @apply text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl leading-normal tracking-normal;
+}
+
+.project-detail {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  @apply text-[12px] sm:text-[14px] md:text-sm lg:text-base xl:text-lg leading-tight tracking-tight;
+}
+
+.about-title {
+    font-family: "Anton", sans-serif;
+    font-weight: 400;
+    font-style: bold;
+    @apply text-4xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-tight tracking-wide text-center;
+}
+
+.about-detail {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  @apply text-[10px] sm:text-[14px] md:text-sm lg:text-base xl:text-lg leading-tight tracking-tight text-center;
+}
+
+.card-about-title {
+  font-family: "Roboto", sans-serif;
+  font-weight: 900;
+  @apply text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-3xl leading-tight tracking-tight;
+}
+
+.footer-title {
+  font-family: "Roboto", sans-serif;
+  font-weight: 900;
+  @apply text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-3xl leading-tight tracking-tight;
+}
+
+.tag {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  user-select: none;
+  @apply text-[15px] sm:text-[14px] md:text-sm lg:text-base xl:text-lg leading-tight tracking-tight;
+}
+
+.know-content {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  @apply text-[10px] sm:text-[14px] md:text-sm lg:text-base xl:text-lg leading-tight tracking-tight;
+}
+
+.footer-text {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  @apply text-[10px] sm:text-[14px] md:text-sm lg:text-base xl:text-lg leading-tight tracking-tight;
+}
